@@ -1,0 +1,43 @@
+{
+    "key": "group_59a742be3f752",
+    "title": "Event Post Type Options",
+    "fields": [
+        {
+            "key": "field_59a742c7bcaf7",
+            "label": "Google Maps API Key",
+            "name": "ept_maps_key",
+            "type": "text",
+            "instructions": "Required for event location maps to function.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "options_page",
+                "operator": "==",
+                "value": "acf-options-event-post-type"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "modified": 1504133858
+}
