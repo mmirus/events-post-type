@@ -133,7 +133,6 @@ function add_event_columns($columns) {
     // add new columns
   $columns = array_merge($columns, [
       'date_start' => 'Start Date',
-      'state' => 'State',
     ]);
 
     // move some columns to end
@@ -155,9 +154,6 @@ function custom_event_columns( $column, $post_id ) {
       $dt = new \DateTime(get_field('date_start', $post_id));
 			echo $dt->format('F j, Y');
 			break;
-		case 'state':
-			echo get_post_meta( $post_id, 'state_abbr', true );
-			break;
 	}
 }
 add_action( 'manage_posts_custom_column' , __NAMESPACE__.'\\custom_event_columns', 10, 2 );
@@ -166,7 +162,6 @@ add_action( 'manage_posts_custom_column' , __NAMESPACE__.'\\custom_event_columns
 function event_sortable_columns() {
   return array(
     'date_start'  => 'date_start',
-    'state'       =>  'state',
   );
 }
 add_filter( 'manage_edit-event_sortable_columns', __NAMESPACE__.'\\event_sortable_columns' );
@@ -185,12 +180,6 @@ function event_sort_by( $vars ) {
     if ( isset( $vars['orderby'] ) ) {
       if ($vars['orderby'] == 'date_start') {
         $vars = array_merge( $vars, $date_sort);
-      }
-      elseif ($vars['orderby'] == 'state') {
-        $vars = array_merge( $vars, [
-          'meta_key' => 'state_abbr',
-          'orderby' => 'meta_value',
-        ]);
       }
     }
     else {
@@ -235,15 +224,6 @@ function today_event_format() {
   return now_est()->format('Ymd');
 }
 
-// make state abbreviation available as a query var
-function register_event_query_vars($vars) {
-	$vars[] = 'event_state';
-	return $vars;
-}
-add_filter('query_vars', __NAMESPACE__.'\\register_event_query_vars');
-
-
-
 // sort events archive by start date, and show only upcoming events
 function sort_event_archives($query) {
   if (is_post_type_archive('event') && !is_admin() && $query->is_main_query()) {
@@ -257,18 +237,10 @@ add_action('pre_get_posts', __NAMESPACE__.'\\sort_event_archives');
 
 
 
-// filter events archive by state (if provided) and show only upcoming events
+// filter events archive to show only upcoming events
 function filter_event_archive($query) {
   if (is_post_type_archive('event') && !is_admin() && $query->is_main_query()) {
     $meta_query = array();
-
-    // add meta_query elements
-    if( !empty( get_query_var( 'event_state' ) ) ){
-      $meta_query[] = [
-        'key' => 'state_abbr',
-        'value' => get_query_var('event_state'),
-      ];
-    }
 
     $today_event_format = today_event_format();
 
