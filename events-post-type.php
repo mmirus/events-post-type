@@ -5,7 +5,7 @@ Plugin URI: https://github.com/afpdigital/events-post-type
 Description:Add an events CPT to your WordPress site. Requires ACF.
 Author: Matt Mirus
 Author URI: https://github.com/afpdigital
-Version: 0.1
+Version: 1.0
 GitHub Plugin URI: https://github.com/afpdigital/events-post-type
 */
 
@@ -21,6 +21,7 @@ add_action('manage_posts_custom_column' , __NAMESPACE__.'\\custom_event_columns'
 add_action('pre_get_posts', __NAMESPACE__.'\\sort_event_archives');
 add_action('pre_get_posts', __NAMESPACE__.'\\filter_event_archive');
 add_action('base_before_template', __NAMESPACE__.'\\add_events_menu');
+add_action('wp_enqueue_scripts', __NAMESPACE__.'\\assets', 100);
 
 // filters
 add_filter('acf/settings/load_json', __NAMESPACE__.'\\acf_add_json_load_point');
@@ -29,6 +30,7 @@ add_filter('manage_edit-event_sortable_columns', __NAMESPACE__.'\\event_sortable
 add_filter('request', __NAMESPACE__.'\\event_sort_by');
 add_filter('the_content', __NAMESPACE__.'\\eventbrite_iframe');
 add_filter('get_the_archive_title', __NAMESPACE__.'\\filter_event_archive_title');
+add_filter('template_include', __NAMESPACE__.'\\add_default_templates', 99);
 
 // Check if Advanced Custom Fields is loaded and deactivate w/ a message if not
 function acf_check() {
@@ -315,4 +317,40 @@ function filter_event_archive_title( $title ) {
     $title = post_type_archive_title('', false);
   }
   return $title;
+}
+
+// add default archive and single templates
+function add_default_templates($template) {
+	if (is_post_type_archive('event')) {
+		$template_name = 'archive-event.php';
+	}
+	elseif (is_singular('event')) {
+		$template_name = 'single-event.php';
+	}
+	else {
+		return $template;
+	}
+	
+	// Check if a custom template exists in the theme folder, if not, load the plugin template file
+	if ($theme_file = locate_template(array($template_name))) {
+		$template = $theme_file;
+	}
+	else {
+		$template = dirname( __FILE__ ) . '/templates/' . $template_name;
+	}
+	
+	return $template;
+}
+
+// enqueue assets
+function assets() {
+  if (is_singular('event')) {
+		$maps_key = get_field('ept_maps_key', 'option');
+		
+		if (!empty($maps_key)) {
+			wp_enqueue_style('events_post_type', plugin_dir_url( __FILE__ ).'assets/events-post-type.css', false, null);
+	    wp_enqueue_script('event_post_type', plugin_dir_url( __FILE__ ).'assets/events-post-type.js', []);
+	    wp_enqueue_script('google_maps', 'https://maps.googleapis.com/maps/api/js?key='.$maps_key.'&callback=acf_map_init', null, false, true);
+		}
+  }
 }

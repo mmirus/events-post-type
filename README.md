@@ -5,7 +5,6 @@ If needed, add support for additional taxonomies to the post type using the ```r
 
 If an ACF Google Maps API key is not already specified on your site, you can enter an API key authorized for use with the Google Maps JavaScript API and Google Geocoding API under Settings > Events Post Type.
 
-TODO:
+Basic event archives and single event templates are provided and will be used by default. You will need to provide any styles you want applied.
 
-- include templates but allow override (see SMO)
-- convert to class(es) / split into files?
+If desired, you can override the included templates using the normal WordPress template hierarchy: add ```archive-event.php``` and ```single-event.php``` to your theme. You can copy the files from the plugin as starters.
