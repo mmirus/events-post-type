@@ -11,6 +11,25 @@ GitHub Plugin URI: https://github.com/afpdigital/events-post-type
 
 namespace EPT;
 
+register_activation_hook(__FILE__, __NAMESPACE__.'\\flush_rewrite_rules');
+
+// actions
+add_action('plugins_loaded', __NAMESPACE__.'\\acf_check');
+add_action('acf/init', __NAMESPACE__.'\\acf_google_api');
+add_action('init', __NAMESPACE__.'\\event_post_type', 0);
+add_action('manage_posts_custom_column' , __NAMESPACE__.'\\custom_event_columns', 10, 2);
+add_action('pre_get_posts', __NAMESPACE__.'\\sort_event_archives');
+add_action('pre_get_posts', __NAMESPACE__.'\\filter_event_archive');
+add_action('base_before_template', __NAMESPACE__.'\\add_events_menu');
+
+// filters
+add_filter('acf/settings/load_json', __NAMESPACE__.'\\acf_add_json_load_point');
+add_filter('manage_event_posts_columns' , __NAMESPACE__.'\\add_event_columns');
+add_filter('manage_edit-event_sortable_columns', __NAMESPACE__.'\\event_sortable_columns');
+add_filter('request', __NAMESPACE__.'\\event_sort_by');
+add_filter('the_content', __NAMESPACE__.'\\eventbrite_iframe');
+add_filter('get_the_archive_title', __NAMESPACE__.'\\filter_event_archive_title');
+
 // Check if Advanced Custom Fields is loaded and deactivate w/ a message if not
 function acf_check() {
 	if(! class_exists('acf')) {
@@ -18,7 +37,6 @@ function acf_check() {
 		add_action('admin_notices', __NAMESPACE__.'\\admin_notice_no_acf');
 	}
 }
-add_action('plugins_loaded', __NAMESPACE__.'\\acf_check');
 
 // deactivate this plugin
 function deactivate() {
@@ -36,7 +54,6 @@ function acf_add_json_load_point($paths) {
 
 	return $paths;
 }
-add_filter('acf/settings/load_json', __NAMESPACE__.'\\acf_add_json_load_point');
 
 // add options page
 if( function_exists('acf_add_options_page') ) {
@@ -55,7 +72,6 @@ function acf_google_api() {
 		acf_update_setting('google_api_key', $maps_key);
 	}
 }
-add_action('acf/init', __NAMESPACE__.'\\acf_google_api');
 
 // flush rewrite rules after adding post type for first time
 function flush_rewrite_rules() {
@@ -63,7 +79,6 @@ function flush_rewrite_rules() {
 
   \flush_rewrite_rules();
 }
-register_activation_hook(__FILE__, __NAMESPACE__.'\\flush_rewrite_rules');
 
 // Register custom post type for events
 function event_post_type() {
@@ -123,7 +138,6 @@ function event_post_type() {
 	);
 	register_post_type( 'event', $args );
 }
-add_action( 'init', __NAMESPACE__.'\\event_post_type', 0 );
 
 // Add custom admin columns
 function add_event_columns($columns) {
@@ -145,7 +159,6 @@ function add_event_columns($columns) {
 
     return $columns;
 }
-add_filter('manage_event_posts_columns' , __NAMESPACE__.'\\add_event_columns');
 
 // Add data to custom admin columns
 function custom_event_columns( $column, $post_id ) {
@@ -156,7 +169,6 @@ function custom_event_columns( $column, $post_id ) {
 			break;
 	}
 }
-add_action( 'manage_posts_custom_column' , __NAMESPACE__.'\\custom_event_columns', 10, 2 );
 
 // Make custom admin columns sortable
 function event_sortable_columns() {
@@ -164,7 +176,6 @@ function event_sortable_columns() {
     'date_start'  => 'date_start',
   );
 }
-add_filter( 'manage_edit-event_sortable_columns', __NAMESPACE__.'\\event_sortable_columns' );
 
 // Sort by...
 function event_sort_by( $vars ) {
@@ -190,7 +201,6 @@ function event_sort_by( $vars ) {
 
   return $vars;
 }
-add_filter( 'request', __NAMESPACE__.'\\event_sort_by' );
 
 /**
  * Get instance of EST DateTimeZone object
@@ -233,7 +243,6 @@ function sort_event_archives($query) {
     $query->set('meta_type', 'DATE');
   }
 }
-add_action('pre_get_posts', __NAMESPACE__.'\\sort_event_archives');
 
 
 
@@ -265,7 +274,6 @@ function filter_event_archive($query) {
     }
   }
 }
-add_action('pre_get_posts', __NAMESPACE__.'\\filter_event_archive');
 
 // add events menu to events archive
 function add_events_menu() {
@@ -273,7 +281,6 @@ function add_events_menu() {
     get_template_part('templates/events-menu');
   }
 }
-add_action('base_before_template', __NAMESPACE__.'\\add_events_menu');
 
 // add Eventbrite registration iframe to single event posts
 function eventbrite_iframe($content) {
@@ -299,14 +306,13 @@ function eventbrite_iframe($content) {
 
   return $content;
 }
-add_filter('the_content', __NAMESPACE__.'\\eventbrite_iframe');
 
 /**
 * Remove 'Archives: ' from the event archives
 */
-add_filter( 'get_the_archive_title', function ( $title ) {
+function filter_event_archive_title( $title ) {
   if (is_post_type_archive('event')) {
     $title = post_type_archive_title('', false);
   }
   return $title;
-});
+}
