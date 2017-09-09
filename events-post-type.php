@@ -1,12 +1,12 @@
 <?php
 /*
 Plugin Name: Events Post Type
-Plugin URI: https://github.com/afpdigital/events-post-type
-Description:Add an events CPT to your WordPress site. Requires ACF.
+Plugin URI: https://github.com/mmirus/events-post-type
+Description: Add an events CPT to your WordPress site. Requires ACF.
 Author: Matt Mirus
 Author URI: https://github.com/afpdigital
 Version: 1.0
-GitHub Plugin URI: https://github.com/afpdigital/events-post-type
+GitHub Plugin URI: https://github.com/mmirus/events-post-type
 */
 
 namespace EPT;
