@@ -5,7 +5,7 @@ Plugin URI: https://github.com/mmirus/events-post-type
 Description: Add an events CPT to your WordPress site. Requires ACF.
 Author: Matt Mirus
 Author URI: https://github.com/afpdigital
-Version: 1.0
+Version: 1.0.1
 GitHub Plugin URI: https://github.com/mmirus/events-post-type
 */
 
@@ -299,7 +299,7 @@ function eventbrite_iframe($content) {
 	if ( is_int($eid) && $eid != 0 ) :
     ?>
 		<div style="width:100%; text-align:left;" >
-			<iframe src="//eventbrite.com/tickets-external?eid=<?= $eid ?>&ref=etckt" frameborder="0" height="250" width="100%" vspace="0" hspace="0" marginheight="5" marginwidth="5" scrolling="auto" allowtransparency="true" class="eventbrite-embed"></iframe>
+			<iframe src="//eventbrite.com/tickets-external?eid=<?= $eid ?>&ref=etckt" frameborder="0" height="325" width="100%" vspace="0" hspace="0" marginheight="5" marginwidth="5" scrolling="auto" allowtransparency="true" class="eventbrite-embed"></iframe>
 		</div>
     <?php
 	endif;
