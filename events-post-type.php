@@ -4,7 +4,7 @@ Plugin Name: Events Post Type
 Plugin URI: https://github.com/mmirus/events-post-type
 Description: Add an events CPT to your WordPress site. Requires ACF.
 Author: Matt Mirus
-Author URI: https://github.com/afpdigital
+Author URI: https://github.com/mmirus
 Version: 1.0.1
 GitHub Plugin URI: https://github.com/mmirus/events-post-type
 */
